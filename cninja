@@ -20,7 +20,8 @@ my %colors = (
     location   => color("bold"),
     warning    => color("bold yellow"),
     error      => color("bold red"),
-    code       => color("bold cyan")
+    code       => color("bold cyan"),
+    passed     => color("bold green"),
 );
 
 sub loadPreferences
@@ -294,6 +295,17 @@ while ( sysread( $pty, $nbuf, 4096 ) || $signaled )
             }
 
             elsif ( $line =~ /^ninja: build stopped:\ / )
+            {
+                print "$colors{failed}$line$reset\n";
+            }
+
+            # ctest lines
+            elsif ( $line =~ /^100% tests passed, 0 tests failed out of / )
+            {
+                print "$colors{passed}$line$reset\n";
+            }
+
+            elsif ( $line =~ /^\d+% tests passed, \d+ tests failed out of / )
             {
                 print "$colors{failed}$line$reset\n";
             }
